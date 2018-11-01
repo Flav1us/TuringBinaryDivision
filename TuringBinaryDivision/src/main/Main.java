@@ -5,12 +5,13 @@ import java.util.List;
 
 import machine.Instruction;
 import machine.Instruction.Move;
+import machine.NoSuchInstruction;
 import machine.States;
 import machine.TM;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchInstruction {
 		// TODO Auto-generated method stub
 		int numOfTapes = 3;
 		List<String> alphabet = new LinkedList<>();
@@ -23,9 +24,14 @@ public class Main {
 		States states = new States(stat, "q0", "q1");
 		Instruction[] instrs = new Instruction[1];
 		instrs[0] = new Instruction("q0", new String[] {"0", "0", "0"}, "q1", new String[] {"1", "1", "1"}, new Move[] {Move.stay, Move.stay, Move.stay}); 
-		
+		String[][] testInput = {
+				{"0", "0", "0"},
+				{"0", "0", "0"},
+				{"0", "0", "0"}
+		};
 			
-		TM m = new TM(numOfTapes, alphabet, inner_alphabet, states, instrs);
+		TM m = new TM(numOfTapes, testInput, alphabet, inner_alphabet, states, instrs);
+		m.executeProgram();
 
 	}
 

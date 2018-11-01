@@ -8,17 +8,19 @@ import java.util.ListIterator;
 import java.util.stream.Stream;
 
 public class TM {
+	private String[][] input;
 	private List<LinkedList<String>> Tapes = new ArrayList<LinkedList<String>>();
-	private List<ListIterator<String>> iterators = new ArrayList<>();
+	private int[] iterators;
 	private List<String> alphabet;
 	private List<String> inner_alphabet;
 	private States states;
 	private Instruction[] instructions;
-	private String current_state = states.start();
+	private String current_state;
 	
 	
 	public TM(
 			int numOfTapes,
+			String[][] input,
 			List<String> alphabet,
 			List<String> inner_alphabet,
 			States states,
@@ -28,10 +30,16 @@ public class TM {
 		this.inner_alphabet = inner_alphabet;
 		this.states = states;
 		this.instructions = instructions;
+		this.current_state = states.start();
+		this.input = input;
+		this.iterators = new int[numOfTapes];
 		for(int i = 0; i<numOfTapes; i++) {
 			Tapes.add(new LinkedList<String>());
-			iterators.add(Tapes.get(i).listIterator());
+			for(int j = 0; j < input[i].length; j++) {
+				Tapes.get(i).add(input[i][j]);
+			}
 		}
+		
 	}
 	
 	public List<LinkedList<String>> executeProgram() throws NoSuchInstruction {
@@ -45,14 +53,14 @@ public class TM {
 	}
 
 	private String iterate(Instruction todo) { //выполнение инструкции
-		for(int i = 0; i < iterators.size(); i++) {
-			iterators.get(i).set(todo.output_symbols[i]);
+		for(int i = 0; i < iterators.length; i++) {
+			Tapes.get(i).set(iterators[i], todo.output_symbols[i]);
 			switch(todo.move[i]) {
 				case L:
-					iterators.get(i).previous();
+					iterators[i]--;
 					break;
 				case R:
-					iterators.get(i).next();
+					iterators[i]++;
 					break;
 				default:
 					break;
@@ -63,11 +71,10 @@ public class TM {
 
 	private boolean isRequiredInstruction(Instruction i) { //поиск подходящей инструкции
 		boolean matches = true;
-		for(int j = 0; j < iterators.size(); j++) {
-			if (!i.input_symbols[j].equals(iterators.get(j).next())) {
+		for(int j = 0; j < iterators.length; j++) {
+			if (!i.input_symbols[j].equals(Tapes.get(j).get(iterators[j]))) {
 				matches = false;
 			}
-			iterators.get(j).previous(); 
 		}
 		if(!i.start_state.equals(current_state)) {
 			matches = false;
