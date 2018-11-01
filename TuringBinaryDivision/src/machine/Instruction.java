@@ -3,7 +3,7 @@ package machine;
 public class Instruction {
 	public static enum Move {L, R, stay}
 	
-	public Instruction(String start_state, String[] input_symbols, String new_state, String output_symbols[], Move move) {
+	public Instruction(String start_state, String[] input_symbols, String new_state, String output_symbols[], Move[] move) {
 		super();
 		this.input_symbols = input_symbols;
 		this.start_state = start_state;
@@ -15,7 +15,7 @@ public class Instruction {
 	public String start_state;
 	
 	public String new_state;
-	public Move move; 
+	public Move[] move; 
 	public String[] output_symbols;
 	
 	private void validate() {

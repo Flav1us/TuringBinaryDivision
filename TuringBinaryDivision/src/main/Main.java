@@ -22,7 +22,7 @@ public class Main {
 		String[] stat = {"q0", "q1"};
 		States states = new States(stat, "q0", "q1");
 		Instruction[] instrs = new Instruction[1];
-		instrs[0] = new Instruction("q0", new String[] {"0", "0", "0"}, "q1", new String[] {"1", "1", "1"}, Move.stay); 
+		instrs[0] = new Instruction("q0", new String[] {"0", "0", "0"}, "q1", new String[] {"1", "1", "1"}, new Move[] {Move.stay, Move.stay, Move.stay}); 
 		
 			
 		TM m = new TM(numOfTapes, alphabet, inner_alphabet, states, instrs);
