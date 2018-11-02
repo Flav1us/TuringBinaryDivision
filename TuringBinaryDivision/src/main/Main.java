@@ -1,5 +1,6 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,11 +14,15 @@ import programs.UnaryDivision;
 public class Main {
 
 	public static void main(String[] args) throws NoSuchInstruction {
-		int[] intInput = {4, 2};
+		int[] intInput = {11, 5};
 		
 		UnaryDivision ud = new UnaryDivision(intInput); 
 		List<LinkedList<String>> res = ud.execute();
-
+		for(LinkedList<String> l : res) {
+			for(String s : l) {
+				System.out.print(s + "\t");
+			} System.out.println();
+		}
 	}
 
 	private static void test0() {
