@@ -8,10 +8,19 @@ import machine.Instruction.Move;
 import machine.NoSuchInstruction;
 import machine.States;
 import machine.TM;
+import programs.UnaryDivision;
 
 public class Main {
 
 	public static void main(String[] args) throws NoSuchInstruction {
+		int[] intInput = {4, 2};
+		
+		UnaryDivision ud = new UnaryDivision(intInput); 
+		List<LinkedList<String>> res = ud.execute();
+
+	}
+
+	private static void test0() {
 		// TODO Auto-generated method stub
 		int numOfTapes = 3;
 		List<String> alphabet = new LinkedList<>();
@@ -29,10 +38,6 @@ public class Main {
 				{"0", "0", "0"},
 				{"0", "0", "0"}
 		};
-			
-		TM m = new TM(numOfTapes, testInput, alphabet, inner_alphabet, states, instrs);
-		m.executeProgram();
-
 	}
 
 }

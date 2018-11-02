@@ -22,30 +22,33 @@ public class TM {
 			int numOfTapes,
 			String[][] input,
 			List<String> alphabet,
-			List<String> inner_alphabet,
 			States states,
 			Instruction[] instructions)
 	{
 		this.alphabet = alphabet;
-		this.inner_alphabet = inner_alphabet;
+		this.inner_alphabet = alphabet.subList(0, alphabet.size());
+		inner_alphabet.add("#"); //Начало строки
+		inner_alphabet.add("B"); //Blank
 		this.states = states;
 		this.instructions = instructions;
 		this.current_state = states.start();
 		this.input = input;
 		this.iterators = new int[numOfTapes];
 		for(int i = 0; i<numOfTapes; i++) {
+			iterators[i]++; //указывает наа первый элемент входа
 			Tapes.add(new LinkedList<String>());
+			Tapes.get(i).add("#"); //начало строки
 			for(int j = 0; j < input[i].length; j++) {
 				Tapes.get(i).add(input[i][j]);
 			}
+			Tapes.get(i).add("B"); //конец строки
 		}
 		
 	}
 	
 	public List<LinkedList<String>> executeProgram() throws NoSuchInstruction {
-		Stream<Instruction> instructionStream = Arrays.stream(instructions);
 		do {
-			Instruction todo = instructionStream.filter(instr -> isRequiredInstruction(instr)).findFirst().get();
+			Instruction todo = Arrays.stream(instructions).filter(instr -> isRequiredInstruction(instr)).findFirst().get();
 			if (todo.equals(null)) throw new NoSuchInstruction(todo);
 			current_state = iterate(todo);
 		} while(current_state != states.end());
@@ -54,8 +57,8 @@ public class TM {
 
 	private String iterate(Instruction todo) { //выполнение инструкции
 		for(int i = 0; i < iterators.length; i++) {
-			Tapes.get(i).set(iterators[i], todo.output_symbols[i]);
-			switch(todo.move[i]) {
+			Tapes.get(i).set(iterators[i], todo.output_symbols[i]); //смена состояний
+			switch(todo.move[i]) { //сдвиг указателейй
 				case L:
 					iterators[i]--;
 					break;
