@@ -1,48 +1,60 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import machine.Instruction;
-import machine.Instruction.Move;
 import machine.NoSuchInstruction;
-import machine.States;
-import machine.TM;
 import programs.UnaryDivision;
 
 public class Main {
 
 	public static void main(String[] args) throws NoSuchInstruction {
-		int[] intInput = {11, 5};
+		// a / b
+		int a=0, b=0;
+		
+		try {
+			a = Integer.parseInt(args[0], 2);
+			b = Integer.parseInt(args[1], 2);
+		} catch (NumberFormatException e1) {
+			try {
+				a = Integer.parseInt(args[0]);
+				b = Integer.parseInt(args[1]);
+			} catch (NumberFormatException e2) {
+				System.out.println("Input error: required two numbers in decimal or binary form");
+				System.exit(0);
+			}
+		}
+		
+		if(b==0) {
+			System.out.println("Cannot divide by zero");
+			System.exit(0);
+		}
+		
+		int[] intInput = {a, b};
 		
 		UnaryDivision ud = new UnaryDivision(intInput); 
 		List<LinkedList<String>> res = ud.execute();
-		for(LinkedList<String> l : res) {
-			for(String s : l) {
-				System.out.print(s + "\t");
-			} System.out.println();
+		int divisor = 0, remainder = 0;
+		for(int i = 0; i<res.get(2).size(); i++) {
+			if(res.get(2).get(i).equals("1")) divisor++;
 		}
+		for(int i = 0; i<res.get(2).size(); i++) {
+			if(res.get(1).get(i).equals("1")) remainder++;
+		}
+		printAsIntegers(a, b, divisor, remainder);
+		printAsBinary(a, b, divisor, remainder);
 	}
 
-	private static void test0() {
-		// TODO Auto-generated method stub
-		int numOfTapes = 3;
-		List<String> alphabet = new LinkedList<>();
-		alphabet.add("0");
-		alphabet.add("1");
-		List<String> inner_alphabet = alphabet.subList(0, alphabet.size());
-		inner_alphabet.add(" ");
-		alphabet.add(" ");
-		String[] stat = {"q0", "q1"};
-		States states = new States(stat, "q0", "q1");
-		Instruction[] instrs = new Instruction[1];
-		instrs[0] = new Instruction("q0", new String[] {"0", "0", "0"}, "q1", new String[] {"1", "1", "1"}, new Move[] {Move.stay, Move.stay, Move.stay}); 
-		String[][] testInput = {
-				{"0", "0", "0"},
-				{"0", "0", "0"},
-				{"0", "0", "0"}
-		};
+	private static void printAsBinary(int a, int b, int divisor, int remainder) {
+		System.out.println(bin(a) + " = " + bin(b) + " * " + bin(divisor) + " + " + bin(remainder));
+	}
+
+	private static void printAsIntegers(int a, int b, int divisor, int remainder) {
+		System.out.println(a + " = " + b + " * " + divisor + " + " + remainder);
+	}
+	
+	private static String bin(int i) {
+		return Integer.toBinaryString(i);
 	}
 
 }
