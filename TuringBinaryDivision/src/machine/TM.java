@@ -64,6 +64,7 @@ public class TM {
 					break;
 				case R:
 					iterators[i]++;
+					if(iterators[i] == Tapes.get(i).size()) Tapes.get(i).add("B"); //самоудлинение
 					break;
 				default:
 					break;

@@ -32,8 +32,10 @@ public class Main {
 		
 		int[] intInput = {a, b};
 		
-		UnaryDivision ud = new UnaryDivision(intInput); 
+		UnaryDivision ud = new UnaryDivision(intInput);
+		
 		List<LinkedList<String>> res = ud.execute();
+		
 		int divisor = 0, remainder = 0;
 		for(int i = 0; i<res.get(2).size(); i++) {
 			if(res.get(2).get(i).equals("1")) divisor++;
