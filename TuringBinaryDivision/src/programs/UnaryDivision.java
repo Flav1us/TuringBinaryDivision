@@ -1,8 +1,8 @@
 package programs;
 
+import static util.Util.str;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class UnaryDivision{
 		Move L = Move.L;
 		Move S = Move.stay;
 		this.instructions = new Instruction[] {
+				//import static util.Util.str
 			new Instruction("q0", str("1", "1", "B"), "q0", str("B", "1", "B"), new Move[] {R, R, S}),
 			new Instruction("q0", str("1", "B", "B"), "q1", str("1", "B", "1"), new Move[] {S, L, R}),
 			new Instruction("q1", str("1", "1", "B"), "q1", str("1", "1", "B"), new Move[] {S, L, S}),
@@ -60,10 +61,6 @@ public class UnaryDivision{
 		for(int i = 0; i<inp[2].length; i++) inp[2][i] = "B";
 		TM tm = new TM(numOfTapes, inp, alphabet, states, instructions);
 		return tm.executeProgram();
-	}
-	
-	private static String[] str(String ... s) { //для сокращения записи, str("s1", "s2", "s3") == new String[] {"s1", "s2", "s3"}
-		return s;
 	}
 	
 }

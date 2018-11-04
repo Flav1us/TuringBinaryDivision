@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class TM {
@@ -48,9 +49,14 @@ public class TM {
 	
 	public List<LinkedList<String>> executeProgram() throws NoSuchInstruction {
 		do {
-			Instruction todo = Arrays.stream(instructions).filter(instr -> isRequiredInstruction(instr)).findFirst().get();
-			if (todo.equals(null)) throw new NoSuchInstruction(todo);
-			current_state = iterate(todo);
+			Optional<Instruction> todo = Arrays.stream(instructions).filter(instr -> isRequiredInstruction(instr)).findFirst();
+			if (todo.isPresent()) {
+				current_state = iterate(todo.get());
+			}
+			else { 
+				throw new NoSuchInstruction(getCurrentInstruction());
+			}
+				
 		} while(current_state != states.end());
 		return Tapes;
 	}
@@ -84,6 +90,14 @@ public class TM {
 			matches = false;
 		}
 		return matches;
+	}
+	
+	public Instruction getCurrentInstruction() {
+		String[] inp_sym = new String[iterators.length];
+		for(int j = 0; j < iterators.length; j++) {
+			inp_sym[j] = Tapes.get(j).get(iterators[j]);
+		}
+		return new Instruction(current_state, inp_sym, null, null, null);
 	}
 }
 			
