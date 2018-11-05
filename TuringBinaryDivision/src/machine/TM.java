@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class TM {
 	private String[][] input;
-	private List<LinkedList<String>> Tapes = new ArrayList<LinkedList<String>>();
+	private List<LinkedList<String>> tapes = new ArrayList<LinkedList<String>>();
 	private int[] iterators;
 	private List<String> alphabet;
 	private List<String> inner_alphabet;
@@ -19,32 +17,34 @@ public class TM {
 	private String current_state;
 	
 	
-	public TM(
-			int numOfTapes,
-			String[][] input,
-			List<String> alphabet,
-			States states,
-			Instruction[] instructions)
-	{
+	public TM(int numOfTapes, String[][] input, List<String> alphabet, States states, Instruction[] instructions) {
+		assert !alphabet.contains("#") && !alphabet.contains("B"); //служебные
 		this.alphabet = alphabet;
-		this.inner_alphabet = alphabet.subList(0, alphabet.size());
-		inner_alphabet.add("#"); //Начало строки
-		inner_alphabet.add("B"); //Blank
+		craftInnerAlphabet(alphabet);
 		this.states = states;
 		this.instructions = instructions;
 		this.current_state = states.start();
 		this.input = input;
 		this.iterators = new int[numOfTapes];
+		initTapes(numOfTapes, input);
+	}
+	
+	private void craftInnerAlphabet(List<String> alphabet) {
+		this.inner_alphabet = alphabet.subList(0, alphabet.size());
+		inner_alphabet.add("#"); //Начало строки
+		inner_alphabet.add("B"); //Blank
+	}
+
+	private void initTapes(int numOfTapes, String[][] input) {
 		for(int i = 0; i<numOfTapes; i++) {
-			iterators[i]++; //указывает наа первый элемент входа
-			Tapes.add(new LinkedList<String>());
-			Tapes.get(i).add("#"); //начало строки
+			iterators[i]++; //указывает на первый элемент входа
+			tapes.add(new LinkedList<String>());
+			tapes.get(i).add("#"); //начало строки
 			for(int j = 0; j < input[i].length; j++) {
-				Tapes.get(i).add(input[i][j]);
+				tapes.get(i).add(input[i][j]);
 			}
-			Tapes.get(i).add("B"); //конец строки
+			tapes.get(i).add("B"); //конец строки
 		}
-		
 	}
 	
 	public List<LinkedList<String>> executeProgram() throws NoSuchInstruction {
@@ -58,22 +58,24 @@ public class TM {
 			}
 				
 		} while(current_state != states.end());
-		return Tapes;
+		return tapes;
 	}
 
 	private String iterate(Instruction todo) { //выполнение инструкции
 		for(int i = 0; i < iterators.length; i++) {
-			Tapes.get(i).set(iterators[i], todo.output_symbols[i]); //смена состояний
+			tapes.get(i).set(iterators[i], todo.output_symbols[i]); //смена состояний
 			switch(todo.move[i]) { //сдвиг указателейй
 				case L:
 					iterators[i]--;
 					break;
 				case R:
 					iterators[i]++;
-					if(iterators[i] == Tapes.get(i).size()) Tapes.get(i).add("B"); //самоудлинение
+					if(iterators[i] == tapes.get(i).size()) tapes.get(i).add("B"); //самоудлинение
+					break;
+				case stay:
 					break;
 				default:
-					break;
+					throw new IllegalArgumentException("Move operation " + todo.move[i] + " is not supported");
 			}
 		}
 		return todo.new_state;
@@ -82,7 +84,7 @@ public class TM {
 	private boolean isRequiredInstruction(Instruction i) { //поиск подходящей инструкции
 		boolean matches = true;
 		for(int j = 0; j < iterators.length; j++) {
-			if (!i.input_symbols[j].equals(Tapes.get(j).get(iterators[j]))) {
+			if (!i.input_symbols[j].equals(tapes.get(j).get(iterators[j]))) {
 				matches = false;
 			}
 		}
@@ -95,7 +97,7 @@ public class TM {
 	public Instruction getCurrentInstruction() {
 		String[] inp_sym = new String[iterators.length];
 		for(int j = 0; j < iterators.length; j++) {
-			inp_sym[j] = Tapes.get(j).get(iterators[j]);
+			inp_sym[j] = tapes.get(j).get(iterators[j]);
 		}
 		return new Instruction(current_state, inp_sym, null, null, null);
 	}

@@ -21,8 +21,8 @@ public class BinarySubstraction {
 	Move S = Move.stay;
 	Move R = Move.R;
 	
-	ArrayList<String> alphabet = new ArrayList<>();
-	States states = new States(new String[] {"q0", "q1", "end"}, "q0", "end"); //TODO
+	ArrayList<String> alphabet = new ArrayList<>(Arrays.asList("0", "1"));
+	States states = new States(new String[] {"q0", "q1", "end"}, "q0", "end");
 	int numOfTapes = 2;
 	
 	Instruction[] instructions = {
@@ -40,16 +40,14 @@ public class BinarySubstraction {
 	};
 	
 	public BinarySubstraction(int a, int b) {
-		alphabet.add("0");
-		alphabet.add("1");
 		this.a = a;
 		this.b = b;
 	}
 	
 	public String[][] formatInput(int a_int, int b_int) {
 		assert a_int >= b_int;
-		String[] a = Integer.toBinaryString(a_int).split("(?<=\\G.)"); //https://stackoverflow.com/questions/2297347/splitting-a-string-at-every-n-th-character
-		String[] b = Integer.toBinaryString(b_int).split("(?<=\\G.)");
+		String[] a = splitCharacters(a_int); 
+		String[] b = splitCharacters(b_int);
 		String[][] inp = new String[2][a.length];
 		for(int i = 0; i<a.length; i++) { //little-endian
 			inp[0][i] = a[a.length-i-1];
@@ -61,6 +59,11 @@ public class BinarySubstraction {
 			inp[1][i] = "0";
 		}
 		return inp;
+	}
+
+	private String[] splitCharacters(int a_int) { //https://stackoverflow.com/questions/2297347/splitting-a-string-at-every-n-th-character
+		String[] a = Integer.toBinaryString(a_int).split("(?<=\\G.)");
+		return a;
 	}
 	
 	public List<LinkedList<String>> execute() throws NoSuchInstruction {
