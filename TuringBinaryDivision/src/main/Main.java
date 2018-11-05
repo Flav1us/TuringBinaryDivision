@@ -28,7 +28,7 @@ public class Main {
 			}
 		}
 		
-		substractBinary(a, b);
+		divideUnary(a, b);
 		
 	}
 
